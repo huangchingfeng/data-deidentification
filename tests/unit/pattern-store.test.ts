@@ -26,12 +26,12 @@ describe('STORAGE_KEY', () => {
 
 describe('loadConfig', () => {
   it('returns the default config when storage is empty', () => {
-    expect(loadConfig()).toEqual({ version: 1, disabledBuiltins: [], customPatterns: [] });
+    expect(loadConfig()).toEqual({ version: 1, disabledBuiltins: [], enabledBuiltins: [], customPatterns: [] });
   });
 
   it('resets to default on corrupt JSON', () => {
     localStorage.setItem(STORAGE_KEY, '{not valid json!!');
-    expect(loadConfig()).toEqual({ version: 1, disabledBuiltins: [], customPatterns: [] });
+    expect(loadConfig()).toEqual({ version: 1, disabledBuiltins: [], enabledBuiltins: [], customPatterns: [] });
   });
 
   it('resets to default when version is not 1', () => {
@@ -39,7 +39,7 @@ describe('loadConfig', () => {
       STORAGE_KEY,
       JSON.stringify({ version: 2, disabledBuiltins: ['tw-id'], customPatterns: [] }),
     );
-    expect(loadConfig()).toEqual({ version: 1, disabledBuiltins: [], customPatterns: [] });
+    expect(loadConfig()).toEqual({ version: 1, disabledBuiltins: [], enabledBuiltins: [], customPatterns: [] });
   });
 
   it('filters out custom patterns with invalid regex, keeping the valid ones', () => {
@@ -203,7 +203,7 @@ describe('validateRegex', () => {
 });
 
 describe('privacy: saveConfig writes only the expected shape', () => {
-  it('leaves exactly one localStorage key with only version/disabledBuiltins/customPatterns fields', () => {
+  it('leaves exactly one localStorage key with only version/disabledBuiltins/enabledBuiltins/customPatterns fields', () => {
     let config = loadConfig();
     config = setBuiltinEnabled(config, 'email', false);
     config = upsertCustom(config, {
@@ -220,7 +220,7 @@ describe('privacy: saveConfig writes only the expected shape', () => {
     const raw = localStorage.getItem(STORAGE_KEY)!;
     const parsed = JSON.parse(raw) as Record<string, unknown>;
     expect(new Set(Object.keys(parsed))).toEqual(
-      new Set(['version', 'disabledBuiltins', 'customPatterns']),
+      new Set(['version', 'disabledBuiltins', 'enabledBuiltins', 'customPatterns']),
     );
   });
 });

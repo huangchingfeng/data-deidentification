@@ -1,6 +1,15 @@
 export type DocFormat = 'txt' | 'md' | 'docx' | 'xlsx' | 'pdf';
 
-export const CATEGORIES = ['姓名', '身分證', '手機', '市話', '地址', '電子郵件', '公司', '統編', '識別碼'] as const;
+export const CATEGORIES = [
+  // 原專案內建九類
+  '姓名', '身分證', '手機', '市話', '地址', '電子郵件', '公司', '統編', '識別碼',
+  // 阿峰版新增：金融
+  '信用卡', '銀行帳號', '保單號碼',
+  // 阿峰版新增：醫療
+  '病歷號', '健保卡號',
+  // 阿峰版新增：外籍人士與其他
+  '居留證', '護照號碼', '英文姓名', '車牌', '出生日期', '社群帳號', 'IP位址',
+] as const;
 export type Category = (typeof CATEGORIES)[number];
 
 export interface Pattern {
@@ -87,7 +96,10 @@ export interface CustomPatternConfig {
 
 export interface PatternConfig {
   version: 1;
+  /** 預設開啟的內建規則中，被使用者關掉的。 */
   disabledBuiltins: string[];
+  /** 預設關閉的內建規則（誤判率高者）中，被使用者主動打開的。 */
+  enabledBuiltins: string[];
   customPatterns: CustomPatternConfig[];
 }
 

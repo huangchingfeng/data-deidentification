@@ -1,5 +1,6 @@
 import type { Pattern } from './types';
 import { isValidTaxId, isValidTwId } from './twid';
+import { AFENG_PATTERNS } from './patterns-afeng';
 
 const CJK = '\\u4e00-\\u9fa5';
 
@@ -76,7 +77,7 @@ function isPlausibleName(m: string, before = ''): boolean {
   return true;
 }
 
-export const BUILTIN_PATTERNS: Pattern[] = [
+const UPSTREAM_PATTERNS: Pattern[] = [
   {
     id: 'zh-name',
     name: '中文姓名',
@@ -158,3 +159,6 @@ export const BUILTIN_PATTERNS: Pattern[] = [
     enabled: true,
   },
 ];
+
+/** 原專案九類 ＋ 阿峰版擴充（金融／醫療／外籍人士）。 */
+export const BUILTIN_PATTERNS: Pattern[] = [...UPSTREAM_PATTERNS, ...AFENG_PATTERNS];

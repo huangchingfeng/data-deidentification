@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <title>Autolab Favicon (Light Mode)</title>
+  <rect width="64" height="64" rx="12" fill="#FFFFFF"/>
+  <rect width="64" height="64" rx="12" fill="none" stroke="#E5E5EA" stroke-width="1"/>
+  <path d="M30 24L6 16L10 22L28 38Z M34 24L58 16L54 22L36 38Z" fill="#00D4FF"/>
+</svg>

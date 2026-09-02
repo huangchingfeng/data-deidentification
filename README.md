@@ -1,14 +1,23 @@
-# 文件去識別化工具
+# 個資去識別化工具（Autolab 擴充版）
 
-[![CI & Deploy](https://github.com/dean9703111/data-deidentification/actions/workflows/deploy.yml/badge.svg)](https://github.com/dean9703111/data-deidentification/actions/workflows/deploy.yml)
-[![Live Demo](https://img.shields.io/badge/demo-GitHub%20Pages-2f6fed?logo=github)](https://deanlin.net/data-deidentification/)
-[![Tests](https://img.shields.io/badge/tests-227%20passing-2e9e5b)](#測試與品質)
+[![Live Demo](https://img.shields.io/badge/demo-deid.autolab.cloud-0099BB)](https://deid.autolab.cloud/)
+[![Tests](https://img.shields.io/badge/tests-276%20passing-34C759)](#測試與品質)
 ![Client-side only](https://img.shields.io/badge/privacy-100%25%20client--side-8e44ad)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
-**在瀏覽器裡完成、資料不出電腦的文件去識別化工具。** 上傳 PDF / Word / Excel / TXT / Markdown 或直接貼上文字，自動偵測中文姓名、身分證字號、手機、市話、地址、電子郵件、公司名稱、統一編號與自訂識別碼；以符合原始格式的方式預覽、人工覆核後，下載去識別化文件與 CSV 編碼對照表，日後可憑編碼表完整還原。
+> ### 📌 關於本版
+> 本專案 **fork 自 [Dean Lin](https://deanlin.net/) 的開源專案 [data-deidentification](https://github.com/dean9703111/data-deidentification)**（MIT 授權），
+> 核心引擎、格式處理與還原機制皆為原作者的成果，在此致謝。
+> 原版線上服務：<https://deanlin.net/data-deidentification/>
+>
+> 本版由 **[Autolab／AI峰哥（黃敬峰）](https://www.autolab.cloud)** 維護，用於企業 AI 培訓課程的教學與示範，主要差異：
+> 1. **新增 12 條偵測規則**，補上金融、醫療與外籍人士識別碼（詳見 [Autolab 擴充規則](#autolab-擴充規則)）
+> 2. 規則分 A／B／C 三級，高誤判規則預設關閉、可手動開啟
+> 3. 套用 Autolab 品牌樣式；頁面不載入任何外部資源（含字型 CDN）
 
-🔗 **線上使用：<https://deanlin.net/data-deidentification/>**
+**在瀏覽器裡完成、資料不出電腦的個資去識別化工具。** 上傳 PDF / Word / Excel / TXT / Markdown 或直接貼上文字，自動偵測 20 類個人資料；以符合原始格式的方式預覽、人工覆核後，下載去識別化文件與 CSV 編碼對照表，日後可憑編碼表完整還原。
+
+🔗 **線上使用：<https://deid.autolab.cloud/>**
 
 <p align="center">
   <img src="docs/screenshots/02-preview.png" alt="去識別化預覽：Word 合約書以頁面方式呈現，敏感資訊以遮罩顯示" width="880">
@@ -16,8 +25,57 @@
 
 ---
 
+## Autolab 擴充規則
+
+原版內建九類規則涵蓋一般商務文件已經夠用。但企業培訓現場最常被追問的是「我們的客戶資料能不能丟給 AI」，
+卡點通常在金融、醫療與外籍人士的識別碼——那才是個資法真正的紅線。本版補的就是那一段。
+
+### A 級：有檢核碼或格式唯一（預設開啟，誤判極低）
+
+| 規則 | 說明 |
+|---|---|
+| 外來人口統一證號（居留證） | 新式 `[A-Z][89]+8碼` 與舊式 `[A-Z][ABCD]+8碼`，**兩種都做檢核碼驗證** |
+| 信用卡號 | 16 碼四段式與 15 碼 Amex，**Luhn 檢核**＋首碼須落在發卡機構區間 |
+| 車牌號碼 | 台灣汽機車常見格式（`ABC-1234`、`MNB-563`） |
+| IP 位址 | IPv4，不會誤抓版本號 |
+
+### B 級：靠上下文關鍵字錨定（預設開啟）
+
+| 規則 | 錨定關鍵字 |
+|---|---|
+| 銀行帳號 | 帳號／帳戶／戶號／存摺／Account No |
+| 保單號碼 | 保單號碼／保單編號／保號／Policy No |
+| 護照號碼 | 護照／Passport No |
+| 病歷號 | 病歷／病歷編號／Chart No／MRN |
+| 健保卡號 | 健保卡／健保卡號 |
+| 出生日期 | 生日／出生年月日／DOB／Date of Birth |
+| 社群帳號 | LINE ID／微信／WeChat／Skype／Telegram／Instagram |
+
+> **B 級規則的取捨**：關鍵字不在附近就抓不到。這是刻意用 recall 換 precision——
+> 否則「所有 12 位數字」「所有日期」都會被標起來，預覽會亂到沒人想用。
+
+### C 級：本質高誤判（預設關閉）
+
+| 規則 | 為什麼預設關閉 |
+|---|---|
+| 英文姓名 | 沒有字典的情況下，`Michael Chen` 和 `Project Alpha` 在正規表達式眼裡長得一樣。內建商務詞停用清單只能擋掉最常見的一批。 |
+
+在「偵測規則」頁籤可手動開啟。**這個開關本身就是很好的教學素材**——讓學員親眼看到誤判長什麼樣，
+比講十遍「AI 工具要人工覆核」有用。
+
+### ⚠️ 已知限制（請務必跟使用者說清楚）
+
+1. **這是初篩，不是保證。** 規則式偵測必然有漏網之魚，文件送出前一定要人工覆核。
+2. **帶檢核碼的規則會放行打錯字的號碼。** 居留證與信用卡若檢核碼不符會被視為非個資而不遮罩——
+   這是為了壓低誤判率的取捨，也正是人工覆核不能省的原因。
+3. **車牌規則可能誤抓料號／型號**（`ABC-1234` 同時是常見的產品編號格式）。
+4. **中文姓名靠寫死的百家姓清單**（原版設計），罕見姓氏會漏。
+
+---
+
 ## 目錄
 
+- [Autolab 擴充規則](#autolab-擴充規則)
 - [為什麼需要這個工具](#為什麼需要這個工具)
 - [功能特色](#功能特色)
 - [隱私與安全設計](#隱私與安全設計)
@@ -78,12 +136,12 @@
 
 ## 快速開始
 
-**直接使用**：開啟 <https://deanlin.net/data-deidentification/>，拖入檔案即可；沒有檔案的話，頁面下方有「用範例體驗」，一鍵載入 Word／PDF／Excel／TXT 範例（見[範例檔下載與體驗](#範例檔下載與體驗)）。
+**直接使用**：開啟 <https://deid.autolab.cloud/>，拖入檔案即可；沒有檔案的話，頁面下方有「用範例體驗」，一鍵載入 Word／PDF／Excel／TXT 範例（見[範例檔下載與體驗](#範例檔下載與體驗)）。
 
 **本機執行**：
 
 ```bash
-git clone https://github.com/dean9703111/data-deidentification.git
+git clone https://github.com/huangchingfeng/data-deidentification.git
 cd data-deidentification
 npm install
 npm run dev        # http://localhost:5173
@@ -227,14 +285,14 @@ PDF 依原始座標逐頁排版（下圖 1 頁碼、2 頁面），表格與版�
 
 | 範例 | 格式 | 內容 | 下載 |
 |------|------|------|------|
-| 委外服務契約書 | Word | 4 頁契約：立契約書人、十二條條款、附件表格、簽署頁（含頁首頁尾） | [contract.docx](https://deanlin.net/data-deidentification/samples/contract.docx) |
-| 委外服務契約書 | PDF | 同一份契約的 PDF 版本 | [contract.pdf](https://deanlin.net/data-deidentification/samples/contract.pdf) |
-| 報價單 | Word | 4 頁報價單：客戶資料、20 項明細（跨頁表格）、聯絡窗口、簽回頁 | [quotation.docx](https://deanlin.net/data-deidentification/samples/quotation.docx) |
-| 報價單 | PDF | 同一份報價單的 PDF 版本 | [quotation.pdf](https://deanlin.net/data-deidentification/samples/quotation.pdf) |
-| 客戶資料 | Excel | 60 筆客戶＋聯絡紀錄 30 筆＋業務窗口，三個工作表 | [customers.xlsx](https://deanlin.net/data-deidentification/samples/customers.xlsx) |
-| 客服信件 | TXT | 客服回覆信與引用的原始來信 | [support-email.txt](https://deanlin.net/data-deidentification/samples/support-email.txt) |
-| 專案會議紀錄 | Markdown | 出席者、決議表格、待辦清單 | [meeting-notes.md](https://deanlin.net/data-deidentification/samples/meeting-notes.md) |
-| 還原體驗 | Word + CSV | 已去識別化的契約書與其編碼表（在「還原」頁籤載入） | [contract.deid.docx](https://deanlin.net/data-deidentification/samples/contract.deid.docx)、[contract.mapping.csv](https://deanlin.net/data-deidentification/samples/contract.mapping.csv) |
+| 委外服務契約書 | Word | 4 頁契約：立契約書人、十二條條款、附件表格、簽署頁（含頁首頁尾） | [contract.docx](https://deid.autolab.cloud/samples/contract.docx) |
+| 委外服務契約書 | PDF | 同一份契約的 PDF 版本 | [contract.pdf](https://deid.autolab.cloud/samples/contract.pdf) |
+| 報價單 | Word | 4 頁報價單：客戶資料、20 項明細（跨頁表格）、聯絡窗口、簽回頁 | [quotation.docx](https://deid.autolab.cloud/samples/quotation.docx) |
+| 報價單 | PDF | 同一份報價單的 PDF 版本 | [quotation.pdf](https://deid.autolab.cloud/samples/quotation.pdf) |
+| 客戶資料 | Excel | 60 筆客戶＋聯絡紀錄 30 筆＋業務窗口，三個工作表 | [customers.xlsx](https://deid.autolab.cloud/samples/customers.xlsx) |
+| 客服信件 | TXT | 客服回覆信與引用的原始來信 | [support-email.txt](https://deid.autolab.cloud/samples/support-email.txt) |
+| 專案會議紀錄 | Markdown | 出席者、決議表格、待辦清單 | [meeting-notes.md](https://deid.autolab.cloud/samples/meeting-notes.md) |
+| 還原體驗 | Word + CSV | 已去識別化的契約書與其編碼表（在「還原」頁籤載入） | [contract.deid.docx](https://deid.autolab.cloud/samples/contract.deid.docx)、[contract.mapping.csv](https://deid.autolab.cloud/samples/contract.mapping.csv) |
 
 更多情境（人工調整、錯誤 CSV、自訂規則、格式邊界）的範例在 `examples/`，說明見 [examples/README.md](examples/README.md)；`npm run examples` 可重新產生全部範例。
 
@@ -301,6 +359,6 @@ Dean Lin — 歡迎追蹤與交流：
 | Facebook | <https://www.facebook.com/deanlinbao> |
 | Threads | <https://www.threads.com/@deanlin5288> |
 | YouTube | <https://www.youtube.com/@dlcorner> |
-| GitHub | <https://github.com/dean9703111> |
+| GitHub | <https://github.com/huangchingfeng/data-deidentification> |
 
 如果這個工具對你有幫助，歡迎給個 ⭐，或在社群上分享使用心得。

@@ -47,6 +47,41 @@ export function maskDisplay(category: Category, original: string): string {
     }
     case '統編':
       return keepEnds(original, 2, 1);
+
+    // ── 阿峰版新增類別 ──
+    case '居留證':
+      return keepEnds(original, 3, 1);
+    case '信用卡': {
+      // 業界慣例：只留末四碼
+      const digits = original.replace(/\D/g, '');
+      if (digits.length >= 8) return `${digits.slice(0, 4)}-****-****-${digits.slice(-4)}`;
+      return keepEnds(original, 4, 4);
+    }
+    case '銀行帳號':
+      return keepEnds(original, 2, 3);
+    case '保單號碼':
+      return keepEnds(original, 3, 2);
+    case '護照號碼':
+    case '病歷號':
+    case '健保卡號':
+      return keepEnds(original, 2, 2);
+    case '車牌':
+      return keepEnds(original, 2, 2);
+    case '出生日期':
+      return keepEnds(original, 2, 0);
+    case '社群帳號':
+      return keepEnds(original, 2, 0);
+    case 'IP位址': {
+      const parts = original.split('.');
+      if (parts.length === 4) return `${parts[0]}.${parts[1]}.***.***`;
+      return keepEnds(original, 3, 0);
+    }
+    case '英文姓名':
+      // 每個字保留首字母：Michael Chen → M****** C***
+      return original
+        .split(/(\s+)/)
+        .map((w) => (/^\s+$/.test(w) || w.length === 0 ? w : w[0] + '*'.repeat(Math.max(1, w.length - 1))))
+        .join('');
     case '識別碼':
     default:
       return keepEnds(original, 3, 0);

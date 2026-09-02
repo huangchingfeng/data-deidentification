@@ -4,7 +4,7 @@ import { BUILTIN_PATTERNS } from './patterns';
 export const STORAGE_KEY = 'deid.patternConfig.v1';
 
 function defaultConfig(): PatternConfig {
-  return { version: 1, disabledBuiltins: [], customPatterns: [] };
+  return { version: 1, disabledBuiltins: [], enabledBuiltins: [], customPatterns: [] };
 }
 
 function storage(): Storage | null {
@@ -24,6 +24,7 @@ export function loadConfig(): PatternConfig {
     return {
       version: 1,
       disabledBuiltins: Array.isArray(parsed.disabledBuiltins) ? parsed.disabledBuiltins.filter((x) => typeof x === 'string') : [],
+      enabledBuiltins: Array.isArray(parsed.enabledBuiltins) ? parsed.enabledBuiltins.filter((x) => typeof x === 'string') : [],
       customPatterns: Array.isArray(parsed.customPatterns)
         ? parsed.customPatterns.filter((c) => c && typeof c.regex === 'string' && validateRegex(c.regex) === null)
         : [],
@@ -49,14 +50,29 @@ export function validateRegex(src: string): string | null {
   }
 }
 
+/** 規則自身 `enabled: false` 代表「預設關閉」，必須由使用者主動開啟。 */
+export function defaultsOff(id: string): boolean {
+  return BUILTIN_PATTERNS.find((p) => p.id === id)?.enabled === false;
+}
+
 export function getEffectivePatterns(config: PatternConfig = loadConfig()): Pattern[] {
   const disabled = new Set(config.disabledBuiltins);
-  const builtins = BUILTIN_PATTERNS.map((p) => ({ ...p, enabled: !disabled.has(p.id) }));
+  const optedIn = new Set(config.enabledBuiltins);
+  const builtins = BUILTIN_PATTERNS.map((p) => ({
+    ...p,
+    enabled: p.enabled === false ? optedIn.has(p.id) : !disabled.has(p.id),
+  }));
   const customs: Pattern[] = config.customPatterns.map((c) => ({ ...c, source: 'custom' }));
   return [...builtins, ...customs];
 }
 
 export function setBuiltinEnabled(config: PatternConfig, id: string, enabled: boolean): PatternConfig {
+  if (defaultsOff(id)) {
+    const set = new Set(config.enabledBuiltins);
+    if (enabled) set.add(id);
+    else set.delete(id);
+    return { ...config, enabledBuiltins: [...set] };
+  }
   const set = new Set(config.disabledBuiltins);
   if (enabled) set.delete(id);
   else set.add(id);

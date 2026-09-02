@@ -13,15 +13,34 @@ const ICONS = {
   youtube: svg('M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z'),
   facebook: svg('M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z'),
   medium: svg('M13.54 12a6.8 6.8 0 0 1-6.77 6.82A6.8 6.8 0 0 1 0 12a6.8 6.8 0 0 1 6.77-6.82A6.8 6.8 0 0 1 13.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z'),
-  // Threads mark approximated as its "@"-style spiral.
-  threads: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M16.2 8.6c-.9-1.9-2.6-2.9-4.7-2.9-3.4 0-5.6 2.7-5.6 6.4s2.2 6.3 5.7 6.3c2.9 0 4.9-1.6 4.9-4 0-2.2-1.7-3.5-4.1-3.5-1.9 0-3.3.9-3.3 2.3 0 1.2 1 2 2.6 2 2.2 0 3.4-1.7 3.5-4.4"/></svg>',
+  globe: svg('M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm7.93 9h-3.02a15.6 15.6 0 0 0-1.2-5.42A8.03 8.03 0 0 1 19.93 11zM12 4.04c.83 1.2 1.48 3.3 1.67 5.96h-3.34C10.52 7.34 11.17 5.24 12 4.04zM4.07 13h3.02c.13 1.94.54 3.77 1.2 5.42A8.03 8.03 0 0 1 4.07 13zm3.02-2H4.07a8.03 8.03 0 0 1 4.22-5.42A15.6 15.6 0 0 0 7.09 11zM12 19.96c-.83-1.2-1.48-3.3-1.67-5.96h3.34c-.19 2.66-.84 4.76-1.67 5.96zM15.91 13h-3.58v-2h3.58c-.02.67-.02 1.33 0 2zm-5.24 0H9.09a24 24 0 0 1 0-2h1.58v2zm5.04 5.42c.66-1.65 1.07-3.48 1.2-5.42h3.02a8.03 8.03 0 0 1-4.22 5.42z'),
+  mail: svg('M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4.24-8 4.76-8-4.76V6l8 4.76L20 6v2.24z'),
+  chat: svg('M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zM7 9h10v2H7V9zm7 5H7v-2h7v2zm3-6H7V6h10v2z'),
 };
+
+/** Autolab 品牌標（淺色版），內嵌 SVG 不發外部請求。 */
+const BRAND_MARK =
+  '<svg viewBox="0 0 402 160" width="30" height="12" aria-hidden="true">' +
+  '<defs><g id="afwing">' +
+  '<polygon points="188,26 0,0 16,22 168,90"/>' +
+  '<polygon points="166,100 34,60 42,72 170,114"/>' +
+  '<polygon points="174,122 68,88 76,100 182,140"/>' +
+  '</g></defs>' +
+  '<use href="#afwing" fill="#00D4FF"/>' +
+  '<use href="#afwing" fill="#00D4FF" transform="translate(392,0) scale(-1,1)"/>' +
+  '</svg>';
 
 const TABS: { id: TabId; label: string; create: () => HTMLElement }[] = [
   { id: 'process', label: '去識別化', create: createProcessView },
   { id: 'patterns', label: '偵測規則', create: createPatternsView },
   { id: 'restore', label: '還原', create: createRestoreView },
 ];
+
+function brandMark(): HTMLElement {
+  const span = el('span', { class: 'brand-mark', 'aria-hidden': 'true' });
+  span.innerHTML = BRAND_MARK;
+  return span;
+}
 
 function mount(): void {
   const app = document.getElementById('app')!;
@@ -54,7 +73,7 @@ function mount(): void {
   }
   const help = el('a', {
     class: 'tab tab-link',
-    href: 'https://github.com/dean9703111/data-deidentification#操作流程',
+    href: 'https://github.com/huangchingfeng/data-deidentification#操作流程',
     target: '_blank',
     rel: 'noopener',
     title: '開啟 GitHub 專案頁的操作說明',
@@ -62,24 +81,37 @@ function mount(): void {
   nav.append(help);
 
   const social: [string, string, string][] = [
-    ['Medium', 'https://medium.com/@dean-lin', ICONS.medium],
-    ['Facebook', 'https://www.facebook.com/deanlinbao', ICONS.facebook],
-    ['Threads', 'https://www.threads.com/@deanlin5288', ICONS.threads],
-    ['YouTube', 'https://www.youtube.com/@dlcorner', ICONS.youtube],
-    ['GitHub', 'https://github.com/dean9703111', ICONS.github],
+    ['官方網站', 'https://www.autolab.cloud', ICONS.globe],
+    ['電子報', 'https://startupforyou.substack.com', ICONS.mail],
+    ['學員社群', 'https://reurl.cc/GGlLNx', ICONS.chat],
+    ['YouTube', 'https://www.youtube.com/channel/UCVVZz6m4T4k6-PZxFSlCkRQ', ICONS.youtube],
+    ['GitHub', 'https://github.com/huangchingfeng/data-deidentification', ICONS.github],
   ];
   app.append(
     el('header', { class: 'header' },
-      el('div', { class: 'brand' }, el('h1', {}, '文件去識別化工具'), el('span', { class: 'muted' }, '純前端處理・文件不離開你的電腦')),
+      el('div', { class: 'brand-wrap' },
+        brandMark(),
+        el('div', { class: 'brand' },
+          el('h1', {}, '文件去識別化工具'),
+          el('span', { class: 'muted' }, '純前端處理・文件不離開你的電腦'),
+        ),
+      ),
       nav,
     ),
     panels,
     el('footer', { class: 'footer' },
       el('div', { class: 'footer-inner' },
-        el('div', {},
-          el('strong', {}, '文件去識別化工具'),
-          el('span', { class: 'muted' }, '　開源專案（MIT）・'),
-          el('a', { href: 'https://github.com/dean9703111/data-deidentification', target: '_blank', rel: 'noopener' }, '原始碼與說明'),
+        el('div', { class: 'footer-credit' },
+          el('div', {},
+            el('strong', {}, '文件去識別化工具'),
+            el('span', { class: 'muted' }, '　Autolab／AI峰哥 擴充版・'),
+            el('a', { href: 'https://github.com/huangchingfeng/data-deidentification', target: '_blank', rel: 'noopener' }, '本版原始碼'),
+          ),
+          el('div', { class: 'muted footer-attrib' },
+            '改作自 ',
+            el('a', { href: 'https://github.com/dean9703111/data-deidentification', target: '_blank', rel: 'noopener' }, 'Dean Lin 的開源專案 data-deidentification'),
+            '（MIT 授權）',
+          ),
         ),
         el('div', { class: 'footer-social' },
           ...social.map(([name, url, icon]) => {

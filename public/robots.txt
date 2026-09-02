@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://deanlin.net/data-deidentification/sitemap.xml
+Sitemap: https://deid.autolab.cloud/sitemap.xml
