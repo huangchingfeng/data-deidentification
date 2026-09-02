@@ -7,7 +7,12 @@
     <meta name="description" content="免安裝、純瀏覽器執行的個資去識別化工具。上傳 PDF、Word、Excel、TXT、Markdown 或直接貼上文字，自動偵測姓名、身分證、手機、地址、Email、統一編號，另加金融（信用卡、銀行帳號、保單號碼）、醫療（病歷號、健保卡號）與外籍人士（居留證、護照）識別碼共 20 類。人工覆核後下載去識別化文件與 CSV 編碼表，之後可完整還原。全程在瀏覽器內完成，文件不會上傳。" />
     <meta name="keywords" content="去識別化, 個資遮罩, 資料脫敏, 文件去識別化, 個資法, PDF 去識別化, Word 去識別化, Excel 去識別化, 身分證遮罩, 信用卡遮罩, 居留證, 病歷號, 企業 AI 導入, 資料安全, de-identification, PII redaction, 純前端" />
     <meta name="author" content="黃敬峰（AI峰哥）／Autolab" />
-    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <!-- 暫時擋收錄（2026-09-02）：等原作者 Dean Lin 回覆知會信後再放開。
+         放開方式：把下一行的 content 值改成 index, follow, max-image-preview:large
+         並把 public/robots.txt 的 Disallow 改回 Allow、恢復 Sitemap 行。
+         注意：擋收錄只能靠這個 meta，不能靠 robots.txt——Cloudflare 的 Managed
+         robots.txt 會插在自訂內容之前，而且那段是 Allow 全站。 -->
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
     <meta name="theme-color" content="#0099BB" />
     <link rel="canonical" href="https://deid.autolab.cloud/" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

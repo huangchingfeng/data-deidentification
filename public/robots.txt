@@ -1,4 +1,7 @@
+# 暫時擋收錄中（2026-09-02）：等原作者回覆後改回 Allow 並恢復 Sitemap 行。
+# 註：Cloudflare Managed robots.txt 會插在本檔內容之前且為 Allow: /，
+#     真正生效的擋收錄是 index.html 裡的 <meta name="robots" content="noindex">。
 User-agent: *
-Allow: /
+Disallow: /
 
-Sitemap: https://deid.autolab.cloud/sitemap.xml
+# Sitemap: https://deid.autolab.cloud/sitemap.xml
