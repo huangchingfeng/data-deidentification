@@ -1,7 +1,7 @@
 # 個資去識別化工具（Autolab 擴充版）
 
 [![Live Demo](https://img.shields.io/badge/demo-deid.autolab.cloud-0099BB)](https://deid.autolab.cloud/)
-[![Tests](https://img.shields.io/badge/tests-276%20passing-34C759)](#測試與品質)
+[![Tests](https://img.shields.io/badge/tests-280%20passing-34C759)](#測試與品質)
 ![Client-side only](https://img.shields.io/badge/privacy-100%25%20client--side-8e44ad)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
